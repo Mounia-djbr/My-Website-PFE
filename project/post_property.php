@@ -1,5 +1,4 @@
 <?php  
-
 include 'components/connect.php';
 
 if(isset($_COOKIE['user_id'])){
@@ -10,7 +9,6 @@ if(isset($_COOKIE['user_id'])){
 }
 
 if(isset($_POST['post'])){
-
    $id = create_unique_id();
    $property_name = $_POST['property_name'];
    $property_name = filter_var($property_name, FILTER_SANITIZE_STRING);
@@ -38,16 +36,19 @@ if(isset($_POST['post'])){
    $balcony = filter_var($balcony, FILTER_SANITIZE_STRING);
    $carpet = $_POST['carpet'];
    $carpet = filter_var($carpet, FILTER_SANITIZE_STRING); 
-   $age = $_POST['age'];
-   $age = filter_var($age, FILTER_SANITIZE_STRING);
    $total_floors = $_POST['total_floors'];
    $total_floors = filter_var($total_floors, FILTER_SANITIZE_STRING);
-   $room_floor = $_POST['room_floor'];
-   $room_floor = filter_var($room_floor, FILTER_SANITIZE_STRING);
    $loan = $_POST['loan'];
    $loan = filter_var($loan, FILTER_SANITIZE_STRING);
    $description = $_POST['description'];
    $description = filter_var($description, FILTER_SANITIZE_STRING);
+   
+   $wilaya_id = $_POST['wilaya_id'];
+   $wilaya_id = filter_var($wilaya_id, FILTER_SANITIZE_STRING);
+   $commune_id = $_POST['commune_id'];
+   $commune_id = filter_var($commune_id, FILTER_SANITIZE_STRING);
+   $code_postal = $_POST['code_postal'];  // استلام الكود البريدي من النموذج
+   $code_postal = filter_var($code_postal, FILTER_SANITIZE_STRING);
 
    if(isset($_POST['parking_area'])){
       $parking_area = $_POST['parking_area'];
@@ -169,15 +170,26 @@ if(isset($_POST['post'])){
    if($image_01_size > 2000000){
       $warning_msg[] = 'image 01 size too large!';
    }else{
-      $insert_property = $conn->prepare("INSERT INTO `property`(id, user_id, property_name, address, price, type, offer, status, furnished, bhk, deposite, bedroom, bathroom, balcony, carpet, age, total_floors, room_floor, loan, parking_area, gym, shopping_mall, hospital, school, market_area, image_01, image_02, image_03, image_04, image_05, description) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"); 
-      $insert_property->execute([$id, $user_id, $property_name, $address, $price, $type, $offer, $status, $furnished, $bhk, $deposite, $bedroom, $bathroom, $balcony, $carpet, $age, $total_floors, $room_floor, $loan, $parking_area, $gym, $shopping_mall, $hospital, $school, $market_area, $rename_image_01, $rename_image_02, $rename_image_03, $rename_image_04, $rename_image_05, $description]);
+      // Insert address into the addresses table and get the address ID
+      $insert_address = $conn->prepare("INSERT INTO `addresses` (address) VALUES (?)");
+      $insert_address->execute([$address]);
+      $address_id = $conn->lastInsertId();
+
+      // Insert property details into the property table
+      $insert_property = $conn->prepare("INSERT INTO `property`(id, user_id, property_name, address, price, type, offer, status, furnished, bhk, deposite, bedroom, bathroom, balcony, carpet, address_id, image_01, image_02, image_03, image_04, image_05, description, wilaya_id, commune_id, code_postal, total_floors, loan, gym, school, hospital, market_area, parking_area, shopping_mall) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+      $insert_property->execute([$id, $user_id, $property_name, $address, $price, $type, $offer, $status, $furnished, $bhk, $deposite, $bedroom, $bathroom, $balcony, $carpet, $address_id, $rename_image_01, $rename_image_02, $rename_image_03, $rename_image_04, $rename_image_05, $description, $wilaya_id, $commune_id, $code_postal, $total_floors, $loan, $gym, $school, $hospital, $market_area, $parking_area, $shopping_mall]);
+
+      // $insert_property = $conn->prepare("INSERT INTO `property`(id, user_id, property_name, price, type, offer, status, furnished, bhk, deposite, bedroom, bathroom, balcony, carpet, address_id, image_01, image_02, image_03, image_04, image_05, description, wilaya_id, commune_id, code_postal, total_floors, loan, gym, school, hospital, market_area, parking_area, shopping_mall) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+      // $insert_property->execute([$id, $user_id, $property_name, $price, $type, $offer, $status, $furnished, $bhk, $deposite, $bedroom, $bathroom, $balcony, $carpet, $address_id, $rename_image_01, $rename_image_02, $rename_image_03, $rename_image_04, $rename_image_05, $description, $wilaya_id, $commune_id, $code_postal, $total_floors, $loan, $gym, $school, $hospital, $market_area, $parking_area, $shopping_mall]);
+      
       move_uploaded_file($image_01_tmp_name, $image_01_folder);
+
       $success_msg[] = 'property posted successfully!';
    }
-
 }
-
 ?>
+
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -202,11 +214,41 @@ if(isset($_POST['post'])){
 
    <form action="" method="POST" enctype="multipart/form-data">
       <h3>property details</h3>
+      
+
+
+      <div class="flex">
       <div class="box">
          <p>property name <span>*</span></p>
          <input type="text" name="property_name" required maxlength="50" placeholder="enter property name" class="input">
       </div>
-      <div class="flex">
+
+
+      <div class="box">
+      <p>ولاية المنزل <span>*</span></p>
+      <select name="wilaya_id" id="wilaya" required class="input">
+         <option value="">اختر الولاية</option>
+         <?php
+         $sql_wilayas = "SELECT * FROM wilayas";
+         $result_wilayas = $conn->query($sql_wilayas);
+         while($row_wilaya = $result_wilayas->fetch(PDO::FETCH_ASSOC)) {
+            echo '<option value="' . $row_wilaya['id'] . '">' . $row_wilaya['nom'] . '</option>';
+         }
+         ?>
+      </select>
+      </div>
+      <div class="box">
+         <p>بلدية المنزل <span>*</span></p>
+         <select name="commune_id" id="commune" required class="input">
+            <option value="">اختر البلدية</option>
+         </select>
+      </div>
+
+
+      <div class="box">
+         <p>Code Postal</p>
+         <input type="text" name="code_postal" id="code_postal" class="input" readonly>
+      </div>
          <div class="box">
             <p>property price <span>*</span></p>
             <input type="number" name="price" required min="0" max="9999999999" maxlength="10" placeholder="enter property price" class="input">
@@ -251,17 +293,17 @@ if(isset($_POST['post'])){
             </select>
          </div>
          <div class="box">
-            <p>how many BHK <span>*</span></p>
+            <p>how many rooms <span>*</span></p>
             <select name="bhk" required class="input">
-               <option value="1">1 BHK</option>
-               <option value="2">2 BHK</option>
-               <option value="3">3 BHK</option>
-               <option value="4">4 BHK</option>
-               <option value="5">5 BHK</option>
-               <option value="6">6 BHK</option>
-               <option value="7">7 BHK</option>
-               <option value="8">8 BHK</option>
-               <option value="9">9 BHK</option>
+               <option value="1">1 room</option>
+               <option value="2">2 rooms</option>
+               <option value="3">3 rooms</option>
+               <option value="4">4 rooms</option>
+               <option value="5">5 rooms</option>
+               <option value="6">6 rooms</option>
+               <option value="7">7 rooms</option>
+               <option value="8">8 rooms</option>
+               <option value="9">9 rooms</option>
             </select>
          </div>
          <div class="box">
@@ -313,16 +355,8 @@ if(isset($_POST['post'])){
             <input type="number" name="carpet" required min="1" max="9999999999" maxlength="10" placeholder="how many squarefits?" class="input">
          </div>
          <div class="box">
-            <p>property age <span>*</span></p>
-            <input type="number" name="age" required min="0" max="99" maxlength="2" placeholder="how old is property?" class="input">
-         </div>
-         <div class="box">
             <p>total floors <span>*</span></p>
             <input type="number" name="total_floors" required min="0" max="99" maxlength="2" placeholder="how floors available?" class="input">
-         </div>
-         <div class="box">
-            <p>floor room <span>*</span></p>
-            <input type="number" name="room_floor" required min="0" max="99" maxlength="2" placeholder="property floor number" class="input">
          </div>
          <div class="box">
             <p>loan <span>*</span></p>
@@ -382,6 +416,49 @@ if(isset($_POST['post'])){
    </form>
 
 </section>
+<script>
+document.getElementById('wilaya').addEventListener('change', function() {
+   var wilayaId = this.value;
+   fetch('get_communes.php?wilaya_id=' + wilayaId)
+      .then(response => response.json())
+      .then(data => {
+         var communeSelect = document.getElementById('commune');
+         var codePostalInput = document.getElementById('code_postal');
+         communeSelect.innerHTML = '<option value="">Select Commune</option>';
+         data.communes.forEach(function(commune) {
+            communeSelect.innerHTML += '<option value="' + commune.id + '" data-codepostal="' + commune.code_postal + '">' + commune.nom + '</option>';
+         });
+         communeSelect.addEventListener('change', function() {
+            var selectedOption = this.options[this.selectedIndex];
+            codePostalInput.value = selectedOption.getAttribute('data-codepostal');
+         });
+      });
+});
+</script>
+<!-- <script>
+document.getElementById('wilaya').addEventListener('change', function() {
+   var wilayaId = this.value;
+   var communeSelect = document.getElementById('commune');
+   communeSelect.innerHTML = '<option value="">Loading...</option>';
+   var xhr = new XMLHttpRequest();
+   xhr.open('POST', 'get_commune.php', true);
+   xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+   xhr.onload = function() {
+      if(xhr.status == 200) {
+         var options = JSON.parse(xhr.responseText);
+         communeSelect.innerHTML = '';
+         options.forEach(function(option) {
+            var opt = document.createElement('option');
+            opt.value = option.id;
+            opt.innerHTML = option.nom;
+            communeSelect.appendChild(opt);
+         });
+      }
+   };
+   xhr.send('wilaya_id=' + wilayaId);
+});
+</script> -->
+
 
 
 

@@ -46,53 +46,20 @@ if(isset($_POST['update'])){
    $balcony = filter_var($balcony, FILTER_SANITIZE_STRING);
    $carpet = $_POST['carpet'];
    $carpet = filter_var($carpet, FILTER_SANITIZE_STRING); 
-   $age = $_POST['age'];
-   $age = filter_var($age, FILTER_SANITIZE_STRING);
    $total_floors = $_POST['total_floors'];
    $total_floors = filter_var($total_floors, FILTER_SANITIZE_STRING);
-   $room_floor = $_POST['room_floor'];
-   $room_floor = filter_var($room_floor, FILTER_SANITIZE_STRING);
    $loan = $_POST['loan'];
    $loan = filter_var($loan, FILTER_SANITIZE_STRING);
    $description = $_POST['description'];
    $description = filter_var($description, FILTER_SANITIZE_STRING);
+   $wilaya_id = $_POST['wilaya_id'];
+   $wilaya_id = filter_var($wilaya_id, FILTER_SANITIZE_STRING);
+   $commune_id = $_POST['commune_id'];
+   $commune_id = filter_var($commune_id, FILTER_SANITIZE_STRING);
+   
+   // $commune = $_POST['commune'];
+   // $commune = filter_var($commune, FILTER_SANITIZE_STRING);
 
-   // if(isset($_POST['lift'])){
-   //    $lift = $_POST['lift'];
-   //    $lift = filter_var($lift, FILTER_SANITIZE_STRING);
-   // }else{
-   //    $lift = 'no';
-   // }
-   // if(isset($_POST['security_guard'])){
-   //    $security_guard = $_POST['security_guard'];
-   //    $security_guard = filter_var($security_guard, FILTER_SANITIZE_STRING);
-   // }else{
-   //    $security_guard = 'no';
-   // }
-   // if(isset($_POST['play_ground'])){
-   //    $play_ground = $_POST['play_ground'];
-   //    $play_ground = filter_var($play_ground, FILTER_SANITIZE_STRING);
-   // }else{
-   //    $play_ground = 'no';
-   // }
-   // if(isset($_POST['garden'])){
-   //    $garden = $_POST['garden'];
-   //    $garden = filter_var($garden, FILTER_SANITIZE_STRING);
-   // }else{
-   //    $garden = 'no';
-   // }
-   // if(isset($_POST['water_supply'])){
-   //    $water_supply = $_POST['water_supply'];
-   //    $water_supply = filter_var($water_supply, FILTER_SANITIZE_STRING);
-   // }else{
-   //    $water_supply = 'no';
-   // }
-   // if(isset($_POST['power_backup'])){
-   //    $power_backup = $_POST['power_backup'];
-   //    $power_backup = filter_var($power_backup, FILTER_SANITIZE_STRING);
-   // }else{
-   //    $power_backup = 'no';
-   // }
    if(isset($_POST['parking_area'])){
       $parking_area = $_POST['parking_area'];
       $parking_area = filter_var($parking_area, FILTER_SANITIZE_STRING);
@@ -246,9 +213,9 @@ if(isset($_POST['update'])){
    }
 
    // $update_listing = $conn->prepare("UPDATE `property` SET property_name = ?, address = ?, price = ?, type = ?, offer = ?, status = ?, furnished = ?, bhk = ?, deposite = ?, bedroom = ?, bathroom = ?, carpet = ?, age = ?, total_floors = ?, room_floor = ?, loan = ?, lift = ?, security_guard = ?, play_ground = ?, garden = ?, water_supply = ?, power_backup = ?, parking_area = ?, gym = ?, shopping_mall = ?, hospital = ?, school = ?, market_area = ?, description = ? WHERE id = ?"); 
-   $update_listing = $conn->prepare("UPDATE `property` SET property_name = ?, address = ?, price = ?, type = ?, offer = ?, status = ?, furnished = ?, bhk = ?, deposite = ?, bedroom = ?, bathroom = ?, carpet = ?, age = ?, total_floors = ?, room_floor = ?, loan = ?, parking_area = ?, gym = ?, shopping_mall = ?, hospital = ?, school = ?, market_area = ?, description = ? WHERE id = ?");   
+   $update_listing = $conn->prepare("UPDATE `property` SET property_name = ?, address = ?, price = ?, type = ?, offer = ?, status = ?, furnished = ?, bhk = ?, deposite = ?, bedroom = ?, bathroom = ?, carpet = ?, total_floors = ?, loan = ?, parking_area = ?, gym = ?, shopping_mall = ?, hospital = ?, school = ?, market_area = ?, description = ?,  wilaya_id = ?,commune_id = ? WHERE id = ?");   
    // $update_listing->execute([$property_name, $address, $price, $type, $offer, $status, $furnished, $bhk, $deposite, $bedroom, $bathroom, $carpet, $age, $total_floors, $room_floor, $loan, $lift, $security_guard, $play_ground, $garden, $water_supply, $power_backup, $parking_area, $gym, $shopping_mall, $hospital, $school, $market_area, $description, $update_id]);
-   $update_listing->execute([$property_name, $address, $price, $type, $offer, $status, $furnished, $bhk, $deposite, $bedroom, $bathroom, $carpet, $age, $total_floors, $room_floor, $loan, $parking_area, $gym, $shopping_mall, $hospital, $school, $market_area, $description, $update_id]);
+   $update_listing->execute([$property_name, $address, $price, $type, $offer, $status, $furnished, $bhk, $deposite, $bedroom, $bathroom, $carpet, $total_floors, $loan, $parking_area, $gym, $shopping_mall, $hospital, $school, $market_area, $description, $wilaya_id, $commune_id , $update_id]);
 
    $success_msg[] = 'listing updated successfully!';
 
@@ -463,16 +430,8 @@ if(isset($_POST['delete_image_05'])){
             <input type="number" name="carpet" required min="1" max="9999999999" maxlength="10" placeholder="how many squarefits?" class="input" value="<?= $fetch_property['carpet']; ?>">
          </div>
          <div class="box">
-            <p>property age <span>*</span></p>
-            <input type="number" name="age" required min="0" max="99" maxlength="2" placeholder="how old is property?" class="input" value="<?= $fetch_property['age']; ?>">
-         </div>
-         <div class="box">
             <p>total floors <span>*</span></p>
             <input type="number" name="total_floors" required min="0" max="99" maxlength="2" placeholder="how floors available?" class="input" value="<?= $fetch_property['total_floors']; ?>">
-         </div>
-         <div class="box">
-            <p>floor room <span>*</span></p>
-            <input type="number" name="room_floor" required min="0" max="99" maxlength="2" placeholder="property floor number" class="input" value="<?= $fetch_property['room_floor']; ?>">
          </div>
          <div class="box">
             <p>loan <span>*</span></p>
@@ -482,6 +441,38 @@ if(isset($_POST['delete_image_05'])){
                <option value="not available" >not available</option>
             </select>
          </div>
+         <!-- <div class="box">
+         <p>property wil <span>*</span></p>
+         <input type="" name="wilaya_id" required min="0" max="99" maxlength="2" placeholder="aucune" class="input" value="<?= $fetch_property['wilaya_id']; ?>">
+      </div> -->
+      <div class="box">
+      <p>property wilaya <span>*</span></p>
+      <select name="wilaya_id" required class="input">
+         <?php
+               // استعلام SQL لاسترجاع أسماء الولايات
+               $wilaya_query = $conn->prepare("SELECT id, nom FROM `wilayas`");
+               $wilaya_query->execute();
+               while($row = $wilaya_query->fetch(PDO::FETCH_ASSOC)) {
+                  $selected = ($row['id'] == $fetch_property['wilaya_id']) ? 'selected' : '';
+                  echo "<option value='{$row['id']}' $selected>{$row['nom']}</option>";
+               }
+         ?>
+      </select>
+   </div>
+   <div class="box">
+      <p>property commune <span>*</span></p>
+      <select name="commune_id" required class="input">
+         <?php
+               // استعلام SQL لاسترجاع أسماء الولايات
+               $commune_query = $conn->prepare("SELECT id, nom FROM `communes`");
+               $commune_query->execute();
+               while($row = $commune_query->fetch(PDO::FETCH_ASSOC)) {
+                  $selected = ($row['id'] == $fetch_property['commune_id']) ? 'selected' : '';
+                  echo "<option value='{$row['id']}' $selected>{$row['nom']}</option>";
+               }
+         ?>
+      </select>
+   </div>
       </div>
       <div class="box">
          <p>property description <span>*</span></p>

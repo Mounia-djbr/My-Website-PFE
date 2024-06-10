@@ -21,6 +21,7 @@ if(isset($_POST['submit'])){
 
    if($select_users->rowCount() > 0){
       setcookie('user_id', $row['id'], time() + 60*60*24*30, '/');
+      // header('location:interests-profile.php');
       header('location:home.php');
    }else{
       $warning_msg[] = 'Incorrect username or password!';

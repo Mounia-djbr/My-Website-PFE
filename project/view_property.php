@@ -59,6 +59,7 @@ include 'components/save_send.php';
 
          $select_saved = $conn->prepare("SELECT * FROM `saved` WHERE property_id = ? and user_id = ?");
          $select_saved->execute([$fetch_property['id'], $user_id]);
+         
    ?>
    <div class="details">
      <div class="swiper images-container">
@@ -95,33 +96,55 @@ include 'components/save_send.php';
       <h3 class="title">details</h3>
       <div class="flex">
          <div class="box">
+         <p><i> property wilaya:</i>
+            <span>
+            <select name="wilaya_id" required class="input">
+               <?php
+                     // استعلام SQL لاسترجاع أسماء الولايات
+                     $wilaya_query = $conn->prepare("SELECT id, nom FROM `wilayas`");
+                     $wilaya_query->execute();
+                     while($row = $wilaya_query->fetch(PDO::FETCH_ASSOC)) {
+                        // تحديد ما إذا كان هذا هو الخيار المحدد
+                        $selected = ($row['id'] == $fetch_property['wilaya_id']) ? 'selected' : '';
+                        // إذا كانت الولاية ثابتة، ضع الخاصية `disabled`
+                        $disabled = ($row['id'] == $fetch_property['wilaya_id']) ? 'disabled' : '';
+                        echo "<option value='{$row['id']}' $selected $disabled>{$row['nom']}</option>";
+                     }
+               ?>
+            </select>
+            <select name="commune_id" required class="input">
+               <?php
+                     // استعلام SQL لاسترجاع أسماء الولايات
+                     $commune_query = $conn->prepare("SELECT id, nom FROM `communes`");
+                     $commune_query->execute();
+                     while($row = $commune_query->fetch(PDO::FETCH_ASSOC)) {
+                        // تحديد ما إذا كان هذا هو الخيار المحدد
+                        $selected = ($row['id'] == $fetch_property['commune_id']) ? 'selected' : '';
+                        // إذا كانت الولاية ثابتة، ضع الخاصية `disabled`
+                        $disabled = ($row['id'] == $fetch_property['commune_id']) ? 'disabled' : '';
+                        echo "<option value='{$row['id']}' $selected $disabled>{$row['nom']}</option>";
+                     }
+               ?>
+            </select>
+            </span></p>
+
             <p><i>rooms :</i><span><?= $fetch_property['bhk']; ?> BHK</span></p>
             <p><i>deposit amount : </i><span><span style="margin-right: .5rem;"></span><?= $fetch_property['deposite']; ?><span> DA</span></span></p>
-
             <p><i>status :</i><span><?= $fetch_property['status']; ?></span></p>
             <p><i>bedroom :</i><span><?= $fetch_property['bedroom']; ?></span></p>
             <p><i>bathroom :</i><span><?= $fetch_property['bathroom']; ?></span></p>
             <p><i>balcony :</i><span><?= $fetch_property['balcony']; ?></span></p>
          </div>
          <div class="box">
-            <p><i>carpet area :</i><span><?= $fetch_property['carpet']; ?>sqft</span></p>
-            <p><i>age :</i><span><?= $fetch_property['age']; ?> years</span></p>
+            <p><i>balcony :</i><span><?= $fetch_property['balcony']; ?></span></p>
+            <p><i>carpet area :</i><span><?= $fetch_property['carpet']; ?>m²</span></p>
             <p><i>total floors :</i><span><?= $fetch_property['total_floors']; ?></span></p>
-            <p><i>room floor :</i><span><?= $fetch_property['room_floor']; ?></span></p>
             <p><i>furnished :</i><span><?= $fetch_property['furnished']; ?></span></p>
             <p><i>loan :</i><span><?= $fetch_property['loan']; ?></span></p>
          </div>
       </div>
       <h3 class="title">amenities</h3>
       <div class="flex">
-         <!-- <div class="box">
-            <p><i class="fas fa-<php if($fetch_property['lift'] == 'yes'){echo 'check';}else{echo 'times';} ?>"></i><span>lifts</span></p>
-            <p><i class="fas fa-<php if($fetch_property['security_guard'] == 'yes'){echo 'check';}else{echo 'times';} ?>"></i><span>security guards</span></p>
-            <p><i class="fas fa-<php if($fetch_property['play_ground'] == 'yes'){echo 'check';}else{echo 'times';} ?>"></i><span>play ground</span></p>
-            <p><i class="fas fa-<php if($fetch_property['garden'] == 'yes'){echo 'check';}else{echo 'times';} ?>"></i><span>gardens</span></p>
-            <p><i class="fas fa-<php if($fetch_property['water_supply'] == 'yes'){echo 'check';}else{echo 'times';} ?>"></i><span>water supply</span></p>
-            <p><i class="fas fa-<php if($fetch_property['power_backup'] == 'yes'){echo 'check';}else{echo 'times';} ?>"></i><span>power backup</span></p>
-         </div> -->
          <div class="box">
             <p><i class="fas fa-<?php if($fetch_property['parking_area'] == 'yes'){echo 'check';}else{echo 'times';} ?>"></i><span>parking area</span></p>
             <p><i class="fas fa-<?php if($fetch_property['gym'] == 'yes'){echo 'check';}else{echo 'times';} ?>"></i><span>gym</span></p>

@@ -139,24 +139,14 @@ if(isset($_POST['delete'])){
             <p><i>balcony :</i><span><?= $fetch_property['balcony']; ?></span></p>
          </div>
          <div class="box">
-            <p><i>carpet area :</i><span><?= $fetch_property['carpet']; ?>sqft</span></p>
-            <p><i>age :</i><span><?= $fetch_property['age']; ?> years</span></p>
+            <p><i>carpet area :</i><span><?= $fetch_property['carpet']; ?>m²</span></p>
             <p><i>total floors :</i><span><?= $fetch_property['total_floors']; ?></span></p>
-            <p><i>room floor :</i><span><?= $fetch_property['room_floor']; ?></span></p>
             <p><i>furnished :</i><span><?= $fetch_property['furnished']; ?></span></p>
             <p><i>loan :</i><span><?= $fetch_property['loan']; ?></span></p>
          </div>
       </div>
       <h3 class="title">amenities</h3>
       <div class="flex">
-         <!-- <div class="box">
-            <p><i class="fas fa-<php if($fetch_property['lift'] == 'yes'){echo 'check';}else{echo 'times';} ?>"></i><span>lifts</span></p>
-            <p><i class="fas fa-<php if($fetch_property['security_guard'] == 'yes'){echo 'check';}else{echo 'times';} ?>"></i><span>security guards</span></p>
-            <p><i class="fas fa-<php if($fetch_property['play_ground'] == 'yes'){echo 'check';}else{echo 'times';} ?>"></i><span>play ground</span></p>
-            <p><i class="fas fa-<php if($fetch_property['garden'] == 'yes'){echo 'check';}else{echo 'times';} ?>"></i><span>gardens</span></p>
-            <p><i class="fas fa-<php if($fetch_property['water_supply'] == 'yes'){echo 'check';}else{echo 'times';} ?>"></i><span>water supply</span></p>
-            <p><i class="fas fa-<php if($fetch_property['power_backup'] == 'yes'){echo 'check';}else{echo 'times';} ?>"></i><span>power backup</span></p>
-         </div> -->
          <div class="box">
             <p><i class="fas fa-<?php if($fetch_property['parking_area'] == 'yes'){echo 'check';}else{echo 'times';} ?>"></i><span>parking area</span></p>
             <p><i class="fas fa-<?php if($fetch_property['gym'] == 'yes'){echo 'check';}else{echo 'times';} ?>"></i><span>gym</span></p>
